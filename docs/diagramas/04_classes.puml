@@ -1,0 +1,69 @@
+@startuml
+!include _estilo.iuml
+hide circle
+skinparam classAttributeIconSize 0
+class Usuario {
+  - id : int
+  - nome : str
+  - email : str
+  - senha_hash : str
+  - perfil : str
+  - criado_em : datetime
+  + definir_senha(senha : str) : void
+  + verificar_senha(senha : str) : bool
+  + is_gestor() : bool
+}
+class Cliente {
+  - id : int
+  - nome : str
+  - segmento : str
+  - instagram : str
+  - email_contato : str
+  - telefone : str
+  - ativo : bool
+  - criado_em : datetime
+  + pode_ser_excluido() : bool
+}
+class Conteudo {
+  - id : int
+  - titulo : str
+  - formato : str
+  - legenda : str
+  - data_publicacao : date
+  - status : str
+  - criado_em : datetime
+  - atualizado_em : datetime
+  + pode_ser_editado() : bool
+  + enviar_para_revisao() : void
+}
+class Revisao {
+  - id : int
+  - decisao : str
+  - comentario : str
+  - criado_em : datetime
+}
+enum StatusConteudo {
+  RASCUNHO
+  EM_REVISAO
+  AJUSTES
+  APROVADO
+  PUBLICADO
+}
+enum Formato {
+  FEED
+  CARROSSEL
+  REELS
+  STORIES
+}
+enum Perfil {
+  GESTOR
+  SOCIAL_MEDIA
+}
+Cliente "1" -- "0..*" Conteudo : possui >
+Usuario "1" -- "0..*" Conteudo : responsável por >
+Conteudo "1" *-- "0..*" Revisao : histórico >
+Usuario "1" -- "0..*" Revisao : revisor de >
+Conteudo ..> StatusConteudo
+Conteudo ..> Formato
+Usuario ..> Perfil
+@enduml

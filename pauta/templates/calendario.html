@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block titulo %}Calendário{% endblock %}
+{% block corpo %}
+<div class="cabecalho">
+  <h1>Calendário editorial</h1>
+  <div class="linha">
+    <a class="botao secundario" href="{{ url_for('calendario_ver', ano=anterior[0], mes=anterior[1], cliente=filtro_cliente) }}">Anterior</a>
+    <strong class="mes">{{ titulo }}</strong>
+    <a class="botao secundario" href="{{ url_for('calendario_ver', ano=seguinte[0], mes=seguinte[1], cliente=filtro_cliente) }}">Próximo</a>
+  </div>
+</div>
+<form class="filtros" method="get">
+  <input type="hidden" name="ano" value="{{ ano }}"><input type="hidden" name="mes" value="{{ mes }}">
+  <select name="cliente" onchange="this.form.submit()">
+    <option value="">Todos os clientes</option>
+    {% for c in clientes %}<option value="{{ c.id }}" {{ 'selected' if filtro_cliente == c.id }}>{{ c.nome }}</option>{% endfor %}
+  </select>
+</form>
+<table class="calendario">
+  <tr>{% for d in ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'] %}<th>{{ d }}</th>{% endfor %}</tr>
+  {% for semana in semanas %}
+  <tr>
+    {% for dia in semana %}
+    <td class="{{ 'vazio' if dia == 0 }} {{ 'hoje' if dia == hoje.day and mes == hoje.month and ano == hoje.year }}">
+      {% if dia %}<span class="dia">{{ dia }}</span>
+        {% for c in por_dia.get(dia, []) %}
+          <a class="evento {{ c.status }}" href="{{ url_for('conteudos_detalhe', conteudo_id=c.id) }}">{{ c.cliente.nome }}: {{ c.titulo }}</a>
+        {% endfor %}
+      {% endif %}
+    </td>
+    {% endfor %}
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

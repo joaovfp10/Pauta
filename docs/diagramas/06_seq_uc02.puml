@@ -1,0 +1,42 @@
+@startuml
+!include _estilo.iuml
+title UC02 Manter clientes
+autonumber
+actor "Gestor" as A
+boundary "Telas de clientes" as T
+control "Rotas /clientes" as C
+entity "Cliente" as M
+database "SQLite" as DB
+group Cadastrar ou editar
+  A -> T : preenche nome, segmento, Instagram e contato
+  T -> C : POST /clientes/novo ou /clientes/{id}/editar
+  C -> C : verifica perfil Gestor
+  alt nome preenchido
+    C -> M : preencher_cliente(dados)
+    M -> DB : INSERT ou UPDATE clientes
+    DB --> C : ok
+    C --> T : "Cliente cadastrado/atualizado"
+  else nome vazio
+    C --> T : "O nome do cliente é obrigatório"
+  end
+end
+group Listar
+  A -> T : acessa Clientes (com busca opcional)
+  T -> C : GET /clientes?q=
+  C -> DB : SELECT * FROM clientes WHERE nome LIKE ?
+  DB --> C : lista
+  C --> T : exibe tabela
+end
+group Excluir
+  A -> T : clica em Excluir e confirma
+  T -> C : POST /clientes/{id}/excluir
+  C -> M : pode_ser_excluido()
+  alt sem conteúdos vinculados
+    M -> DB : DELETE FROM clientes WHERE id = ?
+    C --> T : "Cliente excluído"
+  else possui conteúdos
+    M -> DB : UPDATE clientes SET ativo = false
+    C --> T : "Cliente inativado"
+  end
+end
+@enduml

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block titulo %}{{ 'Editar' if conteudo.id else 'Novo' }} conteúdo{% endblock %}
+{% block corpo %}
+<h1>{{ 'Editar conteúdo' if conteudo.id else 'Novo conteúdo' }}</h1>
+<form class="cartao formulario" method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <label>Título * <input name="titulo" value="{{ conteudo.titulo or '' }}" required></label>
+  <label>Cliente *
+    <select name="cliente_id" required>
+      <option value="">Selecione</option>
+      {% for c in clientes %}<option value="{{ c.id }}" {{ 'selected' if conteudo.cliente_id == c.id }}>{{ c.nome }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>Formato *
+    <select name="formato">
+      {% for chave, rotulo in FORMATOS.items() %}<option value="{{ chave }}" {{ 'selected' if conteudo.formato == chave }}>{{ rotulo }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>Data de publicação * <input type="date" name="data_publicacao" value="{{ conteudo.data_publicacao.isoformat() if conteudo.data_publicacao else '' }}" required></label>
+  <label>Legenda <textarea name="legenda" rows="6">{{ conteudo.legenda or '' }}</textarea></label>
+  <div class="linha">
+    <button class="botao">Salvar</button>
+    <a class="botao secundario" href="{{ url_for('conteudos_detalhe', conteudo_id=conteudo.id) if conteudo.id else url_for('conteudos_listar') }}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

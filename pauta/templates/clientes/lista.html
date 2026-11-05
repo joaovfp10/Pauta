@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block titulo %}Clientes{% endblock %}
+{% block corpo %}
+<div class="cabecalho">
+  <h1>Clientes</h1>
+  {% if usuario.is_gestor %}<a class="botao" href="{{ url_for('clientes_criar') }}">Novo cliente</a>{% endif %}
+</div>
+<form class="filtros" method="get">
+  <input name="q" value="{{ busca }}" placeholder="Buscar por nome">
+  <button class="botao secundario">Buscar</button>
+</form>
+<table>
+  <tr><th>Nome</th><th>Segmento</th><th>Instagram</th><th>Conteúdos</th><th>Situação</th>{% if usuario.is_gestor %}<th></th>{% endif %}</tr>
+  {% for c in clientes %}
+  <tr class="{{ '' if c.ativo else 'inativo' }}">
+    <td>{{ c.nome }}</td>
+    <td>{{ c.segmento or '' }}</td>
+    <td>{% if c.instagram %}@{{ c.instagram }}{% endif %}</td>
+    <td><a href="{{ url_for('conteudos_listar', cliente=c.id) }}">{{ c.conteudos|length }}</a></td>
+    <td>{{ 'Ativo' if c.ativo else 'Inativo' }}</td>
+    {% if usuario.is_gestor %}
+    <td class="acoes">
+      <a href="{{ url_for('clientes_editar', cliente_id=c.id) }}">Editar</a>
+      <form method="post" action="{{ url_for('clientes_excluir', cliente_id=c.id) }}" onsubmit="return confirm('Excluir este cliente?')">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button class="link perigo">Excluir</button>
+      </form>
+    </td>
+    {% endif %}
+  </tr>
+  {% else %}
+  <tr><td colspan="6">Nenhum cliente encontrado.</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

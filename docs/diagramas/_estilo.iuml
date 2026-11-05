@@ -1,0 +1,36 @@
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam backgroundColor white
+skinparam ArrowColor #1f6f5c
+skinparam ActorBorderColor #1f6f5c
+skinparam UsecaseBorderColor #1f6f5c
+skinparam UsecaseBackgroundColor #eef6f3
+skinparam ClassBorderColor #1f6f5c
+skinparam ClassBackgroundColor #f7fbf9
+skinparam ClassHeaderBackgroundColor #dcefe8
+skinparam EntityBorderColor #1f6f5c
+skinparam EntityBackgroundColor #f7fbf9
+skinparam ActivityBorderColor #1f6f5c
+skinparam ActivityBackgroundColor #eef6f3
+skinparam ActivityDiamondBorderColor #1f6f5c
+skinparam ActivityDiamondBackgroundColor #fffbe9
+skinparam SequenceLifeLineBorderColor #8aa79c
+skinparam ParticipantBorderColor #1f6f5c
+skinparam ParticipantBackgroundColor #eef6f3
+skinparam DatabaseBorderColor #1f6f5c
+skinparam DatabaseBackgroundColor #eef6f3
+skinparam PackageBorderColor #8aa79c
+skinparam NoteBackgroundColor #fffbe9
+skinparam NoteBorderColor #c9b46a
+skinparam roundcorner 8
+skinparam SwimlaneBorderColor #8aa79c
+skinparam SequenceGroupBorderColor #8aa79c
+skinparam SequenceGroupBackgroundColor #f2f4f2
+skinparam BoundaryBorderColor #1f6f5c
+skinparam BoundaryBackgroundColor #eef6f3
+skinparam ControlBorderColor #1f6f5c
+skinparam ControlBackgroundColor #eef6f3
+skinparam EntityBackgroundColor #eef6f3
+skinparam ActorBackgroundColor #eef6f3
+skinparam SequenceParticipant underline false

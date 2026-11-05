@@ -1,0 +1,28 @@
+@startuml
+!include _estilo.iuml
+title UC04 Revisar conteúdo
+autonumber
+actor "Gestor" as A
+boundary "Detalhe do conteúdo" as T
+control "Rota /conteudos/{id}/revisar" as C
+entity "Conteudo" as M
+entity "Revisao" as R
+database "SQLite" as DB
+A -> T : abre conteúdo Em revisão
+A -> T : escolhe Aprovar ou Solicitar ajustes\ne escreve comentário
+T -> C : POST decisao, comentario
+C -> C : verifica perfil Gestor
+C -> M : consulta status
+alt status diferente de em_revisao
+  C --> T : "Este conteúdo não está aguardando revisão"
+else decisão = ajustes e comentário vazio
+  C --> T : "Descreva os ajustes que precisam ser feitos"
+else dados válidos
+  C -> R : nova Revisao(decisao, comentario, revisor)
+  R -> DB : INSERT INTO revisoes
+  C -> M : status = decisao
+  M -> DB : UPDATE conteudos SET status = ?
+  C --> T : "Revisão registrada"
+  T --> A : exibe novo status e histórico
+end
+@enduml
