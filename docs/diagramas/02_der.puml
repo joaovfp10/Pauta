@@ -1,0 +1,51 @@
+@startuml
+!include _estilo.iuml
+hide circle
+skinparam linetype ortho
+entity "usuarios" as U {
+  * id : INTEGER <<PK>>
+  --
+  * nome : VARCHAR(120)
+  * email : VARCHAR(120) <<UNIQUE>>
+  * senha_hash : VARCHAR(255)
+  * perfil : VARCHAR(20)
+  * criado_em : DATETIME
+}
+entity "clientes" as C {
+  * id : INTEGER <<PK>>
+  --
+  * nome : VARCHAR(120)
+  segmento : VARCHAR(80)
+  instagram : VARCHAR(60)
+  email_contato : VARCHAR(120)
+  telefone : VARCHAR(20)
+  * ativo : BOOLEAN
+  * criado_em : DATETIME
+}
+entity "conteudos" as CT {
+  * id : INTEGER <<PK>>
+  --
+  * cliente_id : INTEGER <<FK>>
+  * responsavel_id : INTEGER <<FK>>
+  * titulo : VARCHAR(150)
+  * formato : VARCHAR(20)
+  legenda : TEXT
+  * data_publicacao : DATE
+  * status : VARCHAR(20)
+  * criado_em : DATETIME
+  * atualizado_em : DATETIME
+}
+entity "revisoes" as R {
+  * id : INTEGER <<PK>>
+  --
+  * conteudo_id : INTEGER <<FK>>
+  * revisor_id : INTEGER <<FK>>
+  * decisao : VARCHAR(20)
+  comentario : TEXT
+  * criado_em : DATETIME
+}
+C ||--o{ CT : "possui"
+U ||--o{ CT : "é responsável"
+CT ||--o{ R : "recebe"
+U ||--o{ R : "revisa"
+@enduml

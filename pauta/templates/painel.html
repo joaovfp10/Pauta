@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block titulo %}Painel{% endblock %}
+{% block corpo %}
+<h1>Olá, {{ usuario.nome.split()[0] }}</h1>
+<div class="grade-numeros">
+  <div class="numero"><strong>{{ total_clientes }}</strong><span>Clientes ativos</span></div>
+  {% for chave, rotulo in STATUS.items() %}
+  <a class="numero" href="{{ url_for('conteudos_listar', status=chave) }}">
+    <strong>{{ contagem[chave] }}</strong><span>{{ rotulo }}</span></a>
+  {% endfor %}
+</div>
+<section class="cartao">
+  <h2>Próximas publicações</h2>
+  {% if proximos %}
+  <table>
+    <tr><th>Data</th><th>Cliente</th><th>Título</th><th>Status</th></tr>
+    {% for c in proximos %}
+    <tr>
+      <td>{{ c.data_publicacao.strftime('%d/%m') }}</td>
+      <td>{{ c.cliente.nome }}</td>
+      <td><a href="{{ url_for('conteudos_detalhe', conteudo_id=c.id) }}">{{ c.titulo }}</a></td>
+      <td><span class="status {{ c.status }}">{{ STATUS[c.status] }}</span></td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}<p>Nenhuma publicação agendada.</p>{% endif %}
+</section>
+{% endblock %}

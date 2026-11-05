@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Pauta{% endblock %} | Pauta</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+{% if usuario %}
+<header class="topo">
+  <a class="marca" href="{{ url_for('painel') }}">Pauta</a>
+  <nav>
+    <a href="{{ url_for('painel') }}">Painel</a>
+    <a href="{{ url_for('clientes_listar') }}">Clientes</a>
+    <a href="{{ url_for('conteudos_listar') }}">Conteúdos</a>
+    <a href="{{ url_for('calendario_ver') }}">Calendário</a>
+  </nav>
+  <div class="quem">{{ usuario.nome }} <span class="tag">{{ PERFIS[usuario.perfil] }}</span>
+    <a href="{{ url_for('logout') }}">Sair</a></div>
+</header>
+{% endif %}
+<main class="conteudo">
+  {% with mensagens = get_flashed_messages(with_categories=true) %}
+    {% for categoria, texto in mensagens %}
+      <div class="alerta {{ categoria }}">{{ texto }}</div>
+    {% endfor %}
+  {% endwith %}
+  {% block corpo %}{% endblock %}
+</main>
+</body>
+</html>

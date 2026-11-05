@@ -1,0 +1,24 @@
+@startuml
+!include _estilo.iuml
+title UC05 Consultar calendário editorial
+autonumber
+actor "Usuário" as A
+boundary "Tela de calendário" as T
+control "Rota /calendario" as C
+entity "Conteudo" as M
+database "SQLite" as DB
+A -> T : acessa Calendário\n(mês, ano e cliente opcionais)
+T -> C : GET /calendario?ano=&mes=&cliente=
+C -> C : calcula primeiro e último dia do mês
+C -> M : buscar conteúdos do período
+M -> DB : SELECT * FROM conteudos\nWHERE data_publicacao BETWEEN ? AND ?\n[AND cliente_id = ?]
+DB --> M : lista de conteúdos
+M --> C : conteúdos
+C -> C : agrupa conteúdos por dia
+C --> T : grade do mês com conteúdos coloridos por status
+T --> A : exibe calendário
+opt navegar entre meses
+  A -> T : clica em Anterior ou Próximo
+  T -> C : GET /calendario com novo mês
+end
+@enduml

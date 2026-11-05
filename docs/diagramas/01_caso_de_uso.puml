@@ -1,0 +1,25 @@
+@startuml
+!include _estilo.iuml
+left to right direction
+actor "Social media" as SM
+actor "Gestor" as GE
+SM <|-- GE
+rectangle "Sistema Pauta" {
+  usecase "UC01\nAutenticar no sistema" as UC01
+  usecase "UC02\nManter clientes" as UC02
+  usecase "UC03\nManter conteúdos" as UC03
+  usecase "UC04\nRevisar conteúdo" as UC04
+  usecase "UC05\nConsultar calendário\neditorial" as UC05
+  usecase "Enviar conteúdo\npara revisão" as EXT1
+}
+SM --> UC01
+SM --> UC03
+SM --> UC05
+GE --> UC02
+GE --> UC04
+EXT1 .> UC03 : <<extend>>
+UC02 ..> UC01 : <<include>>
+UC03 ..> UC01 : <<include>>
+UC04 ..> UC01 : <<include>>
+UC05 ..> UC01 : <<include>>
+@enduml

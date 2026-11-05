@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block titulo %}{{ 'Editar' if cliente.id else 'Novo' }} cliente{% endblock %}
+{% block corpo %}
+<h1>{{ 'Editar cliente' if cliente.id else 'Novo cliente' }}</h1>
+<form class="cartao formulario" method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <label>Nome * <input name="nome" value="{{ cliente.nome or '' }}" required></label>
+  <label>Segmento <input name="segmento" value="{{ cliente.segmento or '' }}"></label>
+  <label>Instagram <input name="instagram" value="{{ cliente.instagram or '' }}" placeholder="@perfil"></label>
+  <label>E-mail de contato <input type="email" name="email_contato" value="{{ cliente.email_contato or '' }}"></label>
+  <label>Telefone <input name="telefone" value="{{ cliente.telefone or '' }}"></label>
+  <label class="check"><input type="checkbox" name="ativo" {{ 'checked' if cliente.ativo is none or cliente.ativo }}> Cliente ativo</label>
+  <div class="linha">
+    <button class="botao">Salvar</button>
+    <a class="botao secundario" href="{{ url_for('clientes_listar') }}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

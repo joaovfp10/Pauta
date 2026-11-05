@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block titulo %}{{ conteudo.titulo }}{% endblock %}
+{% block corpo %}
+<div class="cabecalho">
+  <h1>{{ conteudo.titulo }}</h1>
+  <span class="status {{ conteudo.status }}">{{ STATUS[conteudo.status] }}</span>
+</div>
+<section class="cartao">
+  <dl class="dados">
+    <dt>Cliente</dt><dd>{{ conteudo.cliente.nome }}</dd>
+    <dt>Formato</dt><dd>{{ FORMATOS[conteudo.formato] }}</dd>
+    <dt>Publicação</dt><dd>{{ conteudo.data_publicacao.strftime('%d/%m/%Y') }}</dd>
+    <dt>Responsável</dt><dd>{{ conteudo.responsavel.nome }}</dd>
+  </dl>
+  <h3>Legenda</h3>
+  <p class="legenda">{{ conteudo.legenda or 'Sem legenda.' }}</p>
+  <div class="linha">
+    {% if conteudo.pode_ser_editado() %}
+      <a class="botao secundario" href="{{ url_for('conteudos_editar', conteudo_id=conteudo.id) }}">Editar</a>
+      <form method="post" action="{{ url_for('conteudos_enviar', conteudo_id=conteudo.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button class="botao">Enviar para revisão</button>
+      </form>
+    {% endif %}
+    {% if conteudo.status == 'aprovado' %}
+      <form method="post" action="{{ url_for('conteudos_publicar', conteudo_id=conteudo.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button class="botao">Marcar como publicado</button>
+      </form>
+    {% endif %}
+    {% if conteudo.status != 'publicado' %}
+      <form method="post" action="{{ url_for('conteudos_excluir', conteudo_id=conteudo.id) }}" onsubmit="return confirm('Excluir este conteúdo?')">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button class="botao perigo">Excluir</button>
+      </form>
+    {% endif %}
+  </div>
+</section>
+
+{% if usuario.is_gestor and conteudo.status == 'em_revisao' %}
+<section class="cartao">
+  <h2>Revisar conteúdo</h2>
+  <form class="formulario" method="post" action="{{ url_for('conteudos_revisar', conteudo_id=conteudo.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <label>Comentário <textarea name="comentario" rows="3" placeholder="Obrigatório ao solicitar ajustes"></textarea></label>
+    <div class="linha">
+      <button class="botao" name="decisao" value="aprovado">Aprovar</button>
+      <button class="botao secundario" name="decisao" value="ajustes">Solicitar ajustes</button>
+    </div>
+  </form>
+</section>
+{% endif %}
+
+<section class="cartao">
+  <h2>Histórico de revisões</h2>
+  {% for r in conteudo.revisoes %}
+    <div class="revisao">
+      <strong>{{ 'Aprovado' if r.decisao == 'aprovado' else 'Ajustes solicitados' }}</strong>
+      por {{ r.revisor.nome }} em {{ r.criado_em.strftime('%d/%m/%Y %H:%M') }}
+      {% if r.comentario %}<p>{{ r.comentario }}</p>{% endif %}
+    </div>
+  {% else %}<p>Nenhuma revisão ainda.</p>{% endfor %}
+</section>
+{% endblock %}

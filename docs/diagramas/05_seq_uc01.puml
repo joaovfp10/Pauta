@@ -1,0 +1,25 @@
+@startuml
+!include _estilo.iuml
+title UC01 Autenticar no sistema
+autonumber
+actor "Usuário" as A
+boundary "Tela de login" as T
+control "Rota /login" as C
+entity "Usuario" as M
+database "SQLite" as DB
+A -> T : informa e-mail e senha
+T -> C : POST /login
+C -> M : buscar por e-mail
+M -> DB : SELECT * FROM usuarios WHERE email = ?
+DB --> M : registro
+alt usuário encontrado e senha confere
+  C -> M : verificar_senha(senha)
+  M --> C : true
+  C -> C : grava usuario_id na sessão
+  C --> T : redireciona para o Painel
+  T --> A : exibe Painel
+else e-mail ou senha inválidos
+  C --> T : mensagem "E-mail ou senha inválidos"
+  T --> A : exibe erro
+end
+@enduml

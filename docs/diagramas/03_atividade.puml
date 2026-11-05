@@ -1,0 +1,26 @@
+@startuml
+!include _estilo.iuml
+title Fluxo de produção e aprovação de conteúdo
+|Social media|
+start
+:Acessar o sistema com e-mail e senha;
+:Cadastrar conteúdo
+(título, cliente, formato, data, legenda);
+:Conteúdo salvo como **Rascunho**;
+repeat
+  :Revisar e editar o conteúdo;
+  :Enviar para revisão;
+  |Gestor|
+  :Conteúdo fica **Em revisão**;
+  :Analisar título, formato e legenda;
+  backward:Ler comentário do gestor;
+repeat while (Conteúdo aprovado?) is (não, solicitar ajustes\ncom comentário obrigatório)
+->sim;
+:Registrar revisão como **Aprovado**;
+|Social media|
+:Publicar na rede social do cliente;
+:Marcar como **Publicado** no sistema;
+:Conteúdo aparece no calendário
+editorial com o novo status;
+stop
+@enduml

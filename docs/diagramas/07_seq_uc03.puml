@@ -1,0 +1,50 @@
+@startuml
+!include _estilo.iuml
+title UC03 Manter conteúdos
+autonumber
+actor "Social media" as A
+boundary "Telas de conteúdo" as T
+control "Rotas /conteudos" as C
+entity "Conteudo" as M
+database "SQLite" as DB
+group Cadastrar
+  A -> T : preenche título, cliente, formato, data e legenda
+  T -> C : POST /conteudos/novo
+  C -> C : valida campos obrigatórios
+  alt dados válidos
+    C -> M : novo Conteudo(status = rascunho)
+    M -> DB : INSERT INTO conteudos
+    C --> T : abre o detalhe do conteúdo
+  else dados inválidos
+    C --> T : lista de erros
+  end
+end
+group Editar
+  A -> T : clica em Editar
+  T -> C : POST /conteudos/{id}/editar
+  C -> M : pode_ser_editado()
+  alt status rascunho ou ajustes
+    M -> DB : UPDATE conteudos
+    C --> T : "Conteúdo atualizado"
+  else outro status
+    C --> T : "Só rascunhos ou ajustes podem ser editados"
+  end
+end
+group Enviar para revisão
+  A -> T : clica em Enviar para revisão
+  T -> C : POST /conteudos/{id}/enviar
+  C -> M : enviar_para_revisao()
+  M -> DB : UPDATE status = em_revisao
+  C --> T : "Conteúdo enviado para revisão"
+end
+group Excluir
+  A -> T : clica em Excluir e confirma
+  T -> C : POST /conteudos/{id}/excluir
+  alt status diferente de publicado
+    C -> DB : DELETE FROM conteudos (e revisões)
+    C --> T : volta para a lista
+  else publicado
+    C --> T : "Conteúdos publicados não podem ser excluídos"
+  end
+end
+@enduml
