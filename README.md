@@ -1,7 +1,7 @@
 # Pauta
 
 Sistema web de gestão de clientes e conteúdo para agências de marketing digital.
-Projeto desenvolvido para as disciplinas Projeto de Desenvolvimento de Software I e II (UniFil).
+Projeto desenvolvido para as disciplinas Projeto de Desenvolvimento de Software I e II do curso de Engenharia de Software da UniFil.
 
 **Autor:** João Victor Ferreira Pinto (trabalho individual)
 

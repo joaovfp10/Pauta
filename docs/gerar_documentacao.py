@@ -23,7 +23,7 @@ SAIDA = os.path.join(AQUI, "Documentacao_Pauta.pdf")
 
 # Dados de identificação (ajuste aqui e rode o script de novo)
 INSTITUICAO = "CENTRO UNIVERSITÁRIO FILADÉLFIA"
-CURSO = ""  # ex.: "CURSO DE ENGENHARIA DE SOFTWARE"
+CURSO = "CURSO DE ENGENHARIA DE SOFTWARE"
 AUTOR = "JOÃO VICTOR FERREIRA PINTO"
 TITULO = "PAUTA"
 SUBTITULO = "sistema de gestão de clientes e conteúdo para agências de marketing digital"
@@ -209,14 +209,12 @@ story = []
 # Capa (modelo UniFil). Logo, faixas, cidade e ano são desenhados em desenhar_capa.
 titulo_capa = ParagraphStyle("titulo_capa", fontName="Arial-B", fontSize=14, leading=20, alignment=TA_CENTER)
 autor_capa = ParagraphStyle("autor_capa", fontName="Arial", fontSize=12, leading=18, alignment=TA_CENTER)
-story += [
-    Spacer(1, 3.6 * cm),
-    Paragraph(AUTOR, autor_capa),
-]
+story += [Spacer(1, 3.6 * cm)]
 if CURSO:
-    story += [Paragraph(CURSO, autor_capa)]
+    story += [Paragraph(CURSO, autor_capa), Spacer(1, 1.2 * cm)]
 story += [
-    Spacer(1, 5.2 * cm),
+    Paragraph(AUTOR, autor_capa),
+    Spacer(1, 5.2 * cm - (1.2 * cm + 18 if CURSO else 0)),
     Paragraph(f"{TITULO}: {SUBTITULO.upper()}", titulo_capa),
     NextPageTemplate("pre"),
     PageBreak(),
@@ -230,7 +228,7 @@ story += [
     Paragraph(f"{TITULO}: {SUBTITULO.upper()}", titulo_capa),
     Spacer(1, 2 * cm),
     Paragraph("Trabalho apresentado às disciplinas de Projeto de Desenvolvimento de Software I e II do "
-              "Centro Universitário Filadélfia (UniFil), como requisito parcial para aprovação.", natureza),
+              "curso de Engenharia de Software do Centro Universitário Filadélfia (UniFil), como requisito parcial para aprovação.", natureza),
     Spacer(1, 12),
     Paragraph(f"Professor: {PROFESSOR}.", natureza),
     Spacer(1, 4.3 * cm),
