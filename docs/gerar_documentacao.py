@@ -18,6 +18,7 @@ from reportlab.platypus.tableofcontents import TableOfContents
 AQUI = os.path.dirname(os.path.abspath(__file__))
 DIAG = os.path.join(AQUI, "diagramas")
 TELAS = os.path.join(AQUI, "telas")
+CAPA = os.path.join(AQUI, "capa")
 SAIDA = os.path.join(AQUI, "Documentacao_Pauta.pdf")
 
 # Dados de identificação (ajuste aqui e rode o script de novo)
@@ -46,7 +47,7 @@ h2 = ParagraphStyle("h2", fontName="Arial", fontSize=12, leading=18, alignment=T
 h3 = ParagraphStyle("h3", fontName="Arial-B", fontSize=12, leading=18, alignment=TA_LEFT, spaceBefore=18, spaceAfter=18, keepWithNext=1)
 sem_ind = ParagraphStyle("sem_ind", fontName="Arial-B", fontSize=12, leading=18, alignment=TA_CENTER, spaceAfter=18)
 centro = ParagraphStyle("centro", fontName="Arial-B", fontSize=12, leading=18, alignment=TA_CENTER)
-centro_n = ParagraphStyle("centro_n", parent=centro, fontName="Arial")
+centro_n = ParagraphStyle("centro_n", parent=centro, fontName="Arial", leading=14)
 natureza = ParagraphStyle("natureza", fontName="Arial", fontSize=12, leading=14, alignment=TA_JUSTIFY,
                           leftIndent=8 * cm)
 resumo = ParagraphStyle("resumo", fontName="Arial", fontSize=12, leading=18, alignment=TA_JUSTIFY)
@@ -85,10 +86,24 @@ class Documento(BaseDocTemplate):
         quadro_l = Frame(3 * cm, 2 * cm, L[0] - 5 * cm, L[1] - 5 * cm, id="ql",
                          leftPadding=0, rightPadding=0, topPadding=0, bottomPadding=0)
         self.addPageTemplates([
+            PageTemplate(id="capa", frames=[quadro], onPage=self.desenhar_capa),
             PageTemplate(id="pre", frames=[quadro]),
             PageTemplate(id="texto", frames=[quadro], onPage=self.numero),
             PageTemplate(id="deitada", frames=[quadro_l], onPage=self.numero_l, pagesize=L),
         ])
+
+    def desenhar_capa(self, canvas, doc):
+        """Capa no modelo da UniFil: logo, faixas laranja, título ao centro, cidade e ano embaixo."""
+        H = A4[1]
+        canvas.drawImage(os.path.join(CAPA, "logo_unifil.png"), 158.9, H - 147.0,
+                         width=277.5, height=73.5, mask="auto")
+        for topo in (155.1, 690.8):
+            canvas.drawImage(os.path.join(CAPA, "barra.png"), 90.8, H - topo - 9,
+                             width=445.4, height=9, mask="auto")
+        meio = (90.8 + 536.2) / 2
+        canvas.setFont("Arial", 12)
+        canvas.drawCentredString(meio, H - 716, CIDADE.title())
+        canvas.drawCentredString(meio, H - 730, ANO)
 
     # NBR 14724: folhas contadas a partir da folha de rosto (a capa não conta);
     # o número aparece a partir da primeira folha da parte textual, no canto superior direito.
@@ -191,34 +206,36 @@ ESTILO_LISTA = [ParagraphStyle("l0", fontName="Arial", fontSize=12, leading=18)]
 story = []
 
 # ================================================================ PRÉ-TEXTUAIS
-# Capa
-story += [Paragraph(INSTITUICAO, centro)]
-if CURSO:
-    story += [Paragraph(CURSO, centro)]
+# Capa (modelo UniFil). Logo, faixas, cidade e ano são desenhados em desenhar_capa.
+titulo_capa = ParagraphStyle("titulo_capa", fontName="Arial-B", fontSize=14, leading=20, alignment=TA_CENTER)
+autor_capa = ParagraphStyle("autor_capa", fontName="Arial", fontSize=12, leading=18, alignment=TA_CENTER)
 story += [
-    Spacer(1, 4 * cm),
-    Paragraph(AUTOR, centro),
-    Spacer(1, 6 * cm),
-    Paragraph(f"{TITULO}: {SUBTITULO}", centro),
-    Spacer(1, 9.5 * cm),
-    Paragraph(CIDADE, centro),
-    Paragraph(ANO, centro),
+    Spacer(1, 3.6 * cm),
+    Paragraph(AUTOR, autor_capa),
+]
+if CURSO:
+    story += [Paragraph(CURSO, autor_capa)]
+story += [
+    Spacer(1, 5.2 * cm),
+    Paragraph(f"{TITULO}: {SUBTITULO.upper()}", titulo_capa),
+    NextPageTemplate("pre"),
     PageBreak(),
 ]
 
 # Folha de rosto
 story += [
-    Paragraph(AUTOR, centro),
-    Spacer(1, 7 * cm),
-    Paragraph(f"{TITULO}: {SUBTITULO}", centro),
+    Spacer(1, 3.6 * cm),
+    Paragraph(AUTOR, autor_capa),
+    Spacer(1, 5.2 * cm),
+    Paragraph(f"{TITULO}: {SUBTITULO.upper()}", titulo_capa),
     Spacer(1, 2 * cm),
     Paragraph("Trabalho apresentado às disciplinas de Projeto de Desenvolvimento de Software I e II do "
               "Centro Universitário Filadélfia (UniFil), como requisito parcial para aprovação.", natureza),
     Spacer(1, 12),
     Paragraph(f"Professor: {PROFESSOR}.", natureza),
-    Spacer(1, 7.3 * cm),
-    Paragraph(CIDADE, centro),
-    Paragraph(ANO, centro),
+    Spacer(1, 4.3 * cm),
+    Paragraph(CIDADE.title(), centro_n),
+    Paragraph(ANO, centro_n),
     PageBreak(),
 ]
 
@@ -510,5 +527,7 @@ refs = [  # NBR 6023:2018, ordem alfabética
 ]
 story += [Paragraph(r, ref) for r in refs]
 
-Documento(SAIDA).multiBuild(story)
+doc = Documento(SAIDA)
+doc.pageTemplates.sort(key=lambda t: t.id != 'capa')
+doc.multiBuild(story)
 print("ok", SAIDA)
